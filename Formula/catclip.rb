@@ -1,7 +1,7 @@
 class Catclip < Formula
   desc "Copy project files to clipboard with safe ignores"
   homepage "https://github.com/tigreau/catclip"
-  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.1.2.tar.gz"
+  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.1.3.tar.gz"
   sha256 "00c08960311dc9023eade9922f59eb87451be541bff9ecfeeb106973de684f0a"
   license "MIT"
 
