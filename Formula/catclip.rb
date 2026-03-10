@@ -1,61 +1,28 @@
 class Catclip < Formula
   desc "Copy project files to clipboard with safe ignores"
   homepage "https://github.com/tigreau/catclip"
-  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.2.1.tar.gz"
-  sha256 "b9c58de4995eb9a0ba6abefb5b94ed83ce1451b1b939faf95b403752d3120e92"
+  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "57d393976ce33e37adda18d6e4928a81fc37c6784652a16dd9a054aaf9d66eea"
   license "MIT"
+
+  depends_on "fzf"
+  depends_on "ripgrep"
+  depends_on "go" => :build
+
   def install
-    warn_about_legacy_install
-    bin.install "catclip"
+    system "go", "build", *std_go_args(output: libexec/"catclip"), "./cmd/catclip"
     pkgshare.install "VERSION"
+    (bin/"catclip").write_env_script libexec/"catclip",
+                                     CATCLIP_FZF: Formula["fzf"].opt_bin/"fzf",
+                                     CATCLIP_RG:  Formula["ripgrep"].opt_bin/"rg"
   end
 
-  def caveats
-    <<~EOS
-      A recent version of catclip switched from `ignore.yaml` to the new
-      configuration file `~/.config/catclip/.hiss`.
-      If you still have an old `ignore.yaml` file, you should delete it
-      manually:
-        rm ~/.config/catclip/ignore.yaml
-      The new file will be created automatically the first time you run
-      catclip.
-    EOS
-  end
   test do
-    (testpath/"sample.txt").write("hi")
-    output = shell_output("#{bin}/catclip --print sample.txt")
-    assert_match "<file path=\"sample.txt\">", output
+    (testpath/"sample").mkpath
+    (testpath/"sample/sample.txt").write("hi")
+
+    output = shell_output("#{bin}/catclip --quiet --print sample --only '*.txt'")
+    assert_match "<file path=\"sample/sample.txt\">", output
     assert_match "hi", output
-  end
-
-  private
-
-  def warn_about_legacy_install
-    legacy_binaries = [
-      "/usr/local/bin/catclip",
-      "/opt/homebrew/bin/catclip",
-      "/usr/bin/catclip",
-      "/bin/catclip",
-      File.join(Dir.home, ".local/bin/catclip"),
-    ].uniq
-    legacy_binaries.each do |path|
-      next unless File.exist?(path)
-
-      opoo "Legacy catclip detected at #{path}; run `brew link --overwrite catclip` after install " \
-           "so the keg can link cleanly."
-    end
-    legacy_versions = [
-      "/usr/local/share/catclip/VERSION",
-      "/opt/homebrew/share/catclip/VERSION",
-      File.join(Dir.home, ".local/share/catclip/VERSION"),
-    ].uniq
-    legacy_versions.each do |path|
-      next unless File.exist?(path)
-
-      opoo "Legacy VERSION detected at #{path}; run `brew link --overwrite catclip` after install " \
-           "so pkgshare can link its VERSION."
-    end
-  rescue Errno::ENOENT
-    nil
   end
 end
