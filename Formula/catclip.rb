@@ -1,8 +1,8 @@
 class Catclip < Formula
   desc "Copy project files to clipboard with safe ignores"
   homepage "https://github.com/tigreau/catclip"
-  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.5.6.tar.gz"
-  sha256 "038fade95d314e6979420735de793746273735e2f9be810c9a58f4aac1fc3898"
+  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.5.7.tar.gz"
+  sha256 "c41614e5f275399fbd76f4c39a7afd4bed990250393fd78ab905fc3dac18d614"
   license "MIT"
 
   depends_on "go" => :build
