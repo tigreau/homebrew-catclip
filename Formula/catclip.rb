@@ -1,8 +1,8 @@
 class Catclip < Formula
   desc "Copy project files to clipboard with safe ignores"
   homepage "https://github.com/tigreau/catclip"
-  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.7.1.tar.gz"
-  sha256 "f43deb907b87f7f070770cd2ed695dac5556a3178c9900c62b3bdd97b4d709ec"
+  url "https://github.com/tigreau/catclip/archive/refs/tags/v0.7.2.tar.gz"
+  sha256 "c63bc7f749ce944d6e1fac89065962559b12491b29f59ef568870c14a56375d9"
   license "MIT"
 
   depends_on "go" => :build
@@ -12,7 +12,6 @@ class Catclip < Formula
   def install
     system "go", "build", *std_go_args(output: libexec/"catclip"), "./cmd/catclip"
 
-    pkgshare.install "VERSION"
 
     (bin/"catclip").write_env_script libexec/"catclip",
                                      CATCLIP_FZF:  Formula["fzf"].opt_bin/"fzf",
@@ -35,5 +34,6 @@ class Catclip < Formula
     output = shell_output("#{bin}/catclip --quiet --print sample --only '*.txt'")
     assert_match "<file path=\"sample/sample.txt\">", output
     assert_match "hi", output
+    assert_match "catclip #{version}", shell_output("#{bin}/catclip --version")
   end
 end
